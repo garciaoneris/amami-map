@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amami Eats — Where to eat in Amami Ōshima</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Amami Eats</h1>
+      <p class="subtitle">A personal guide to eating in Amami Ōshima · click any pin or card to open in Google Maps</p>
+    </div>
+    <div class="counter"><span id="visible-count">0</span> places shown</div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="controls">
+        <input id="search" type="search" placeholder="Search by name or description…" aria-label="Search" />
+
+        <div class="row">
+          <label for="sort">Sort</label>
+          <select id="sort">
+            <option value="must-visit">Must-visit first</option>
+            <option value="meal">By meal time</option>
+            <option value="region">By region (N → S)</option>
+            <option value="name">Name (A → Z)</option>
+          </select>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">Meal</div>
+          <div class="chips" data-group="meal">
+            <button class="chip" data-tag="breakfast">Breakfast</button>
+            <button class="chip" data-tag="lunch">Lunch</button>
+            <button class="chip" data-tag="dinner">Dinner</button>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">Type</div>
+          <div class="chips" data-group="type">
+            <button class="chip" data-tag="restaurant">Restaurant</button>
+            <button class="chip" data-tag="café">Café</button>
+            <button class="chip" data-tag="bakery">Bakery</button>
+            <button class="chip" data-tag="dessert">Dessert</button>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">Vibe</div>
+          <div class="chips" data-group="vibe">
+            <button class="chip" data-tag="must-visit">★ Must-visit</button>
+            <button class="chip" data-tag="view">Great view</button>
+            <button class="chip" data-tag="ocean">By the ocean</button>
+            <button class="chip" data-tag="classy">Classy</button>
+            <button class="chip" data-tag="local-vibe">Local vibe</button>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">Cuisine</div>
+          <div class="chips" data-group="cuisine">
+            <button class="chip" data-tag="ramen">Ramen</button>
+            <button class="chip" data-tag="keihan">Keihan</button>
+            <button class="chip" data-tag="seafood">Seafood</button>
+            <button class="chip" data-tag="burger">Burger</button>
+            <button class="chip" data-tag="sandwich">Sandwich</button>
+            <button class="chip" data-tag="pizza">Pizza</button>
+            <button class="chip" data-tag="yakitori">Yakitori</button>
+            <button class="chip" data-tag="soba">Soba</button>
+            <button class="chip" data-tag="tofu">Tofu</button>
+            <button class="chip" data-tag="ice-cream">Ice cream</button>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">Region</div>
+          <div class="chips" data-group="region">
+            <button class="chip" data-tag="north">North (Tatsugo / Kasari)</button>
+            <button class="chip" data-tag="naze">Naze (city)</button>
+            <button class="chip" data-tag="central">Central</button>
+            <button class="chip" data-tag="south">South (Setouchi)</button>
+          </div>
+        </div>
+
+        <button id="clear-filters" class="clear-btn" type="button">Clear all filters</button>
+      </div>
+
+      <div id="list" class="list" aria-live="polite"></div>
+    </aside>
+
+    <main id="map" aria-label="Map of restaurants in Amami"></main>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="places.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
