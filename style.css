@@ -140,17 +140,12 @@ body {
   border-color: var(--accent);
 }
 
-.clear-btn {
-  margin-top: 4px;
-  background: transparent;
-  border: 1px dashed var(--line);
-  color: var(--ink-soft);
-  border-radius: 6px;
-  padding: 6px 8px;
+.hint {
   font-size: 12px;
-  cursor: pointer;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  padding: 2px 2px 0;
 }
-.clear-btn:hover { color: var(--accent); border-color: var(--accent); }
 
 /* ---------- List ---------- */
 .list {

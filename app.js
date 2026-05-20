@@ -39,9 +39,8 @@ function tagLabel(t) { return TAG_LABELS[t] || t; }
 
 // ---------- state ----------
 const state = {
-  activeFilters: new Set(),  // selected tag chips
-  search: "",
   sort: "must-visit",
+  focused: null,             // name of card most recently clicked / marker last opened
 };
 
 // ---------- map ----------
@@ -100,7 +99,6 @@ function buildMarker(place) {
     `<div class="pop-desc">${escapeHtml(place.description)}</div>` +
     `<a href="${place.url}" target="_blank" rel="noopener">Open in Google Maps →</a>`
   );
-  marker.on("click", () => focusCard(place.name));
   return marker;
 }
 
@@ -125,25 +123,8 @@ const listEl = $("#list");
 const countEl = $("#visible-count");
 
 function passesFilters(place) {
-  // Search match (name or description, case insensitive)
-  if (state.search) {
-    const q = state.search.toLowerCase();
-    if (
-      !place.name.toLowerCase().includes(q) &&
-      !place.description.toLowerCase().includes(q)
-    ) {
-      return false;
-    }
-  }
-  // All selected tags must be present (AND across chips for precision)
-  for (const t of state.activeFilters) {
-    if (t === "must-visit") {
-      if (!place.mustVisit) return false;
-    } else if (!place.tags.includes(t)) {
-      return false;
-    }
-  }
-  return true;
+  // Only show places whose marker is inside the current map viewport.
+  return map.getBounds().contains([place.lat, place.lng]);
 }
 
 function sortedPlaces(places) {
@@ -187,82 +168,61 @@ function render() {
   countEl.textContent = visible.length;
 
   if (visible.length === 0) {
-    listEl.innerHTML = `<div class="empty">No places match these filters.</div>`;
+    listEl.innerHTML = `<div class="empty">No places in this view — zoom out or pan.</div>`;
   } else {
     listEl.innerHTML = visible.map(cardHtml).join("");
   }
 
-  // Sync marker visibility.
-  const visibleNames = new Set(visible.map((p) => p.name));
-  markersByName.forEach(({ marker }, name) => {
-    if (visibleNames.has(name)) {
-      if (!map.hasLayer(marker)) markerLayer.addLayer(marker);
-    } else if (map.hasLayer(marker)) {
-      markerLayer.removeLayer(marker);
-    }
-  });
-
   // Wire card clicks (rebound each render).
   $$(".card", listEl).forEach((card) => {
     card.addEventListener("click", (ev) => {
-      // Don't hijack the Google Maps link.
-      if (ev.target.closest("a")) return;
+      if (ev.target.closest("a")) return;          // don't hijack the Google Maps link
       const name = card.dataset.name;
       const entry = markersByName.get(name);
       if (!entry) return;
+      state.focused = name;
       map.flyTo([entry.place.lat, entry.place.lng], 16, { duration: 0.6 });
       entry.marker.openPopup();
-      focusCard(name);
     });
   });
+
+  // Re-apply the focused highlight (and keep it in view) after every re-render,
+  // since the moveend that follows a flyTo rebuilds the list.
+  if (state.focused) {
+    const target = $(`.card[data-name="${cssEscape(state.focused)}"]`, listEl);
+    if (target) {
+      target.classList.add("focused");
+      target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
 }
 
-function focusCard(name) {
-  $$(".card", listEl).forEach((c) => c.classList.toggle("focused", c.dataset.name === name));
-  const target = $(`.card[data-name="${cssEscape(name)}"]`, listEl);
-  if (target) target.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
 function cssEscape(s) {
   return s.replace(/(["\\])/g, "\\$1");
 }
 
 // ---------- wiring ----------
-$("#search").addEventListener("input", (e) => {
-  state.search = e.target.value.trim();
-  render();
-});
-
 $("#sort").addEventListener("change", (e) => {
   state.sort = e.target.value;
   render();
 });
 
-$$(".chip").forEach((chip) => {
-  chip.addEventListener("click", () => {
-    const tag = chip.dataset.tag;
-    if (state.activeFilters.has(tag)) {
-      state.activeFilters.delete(tag);
-      chip.classList.remove("active");
-    } else {
-      state.activeFilters.add(tag);
-      chip.classList.add("active");
-    }
+// Re-render the list whenever the map viewport changes.
+map.on("moveend", render);
+
+// Also rebuild the list when a marker is clicked directly on the map.
+markersByName.forEach(({ marker, place }) => {
+  marker.on("click", () => {
+    state.focused = place.name;
     render();
   });
 });
 
-$("#clear-filters").addEventListener("click", () => {
-  state.activeFilters.clear();
-  state.search = "";
-  $("#search").value = "";
-  $$(".chip.active").forEach((c) => c.classList.remove("active"));
-  render();
-});
-
-// Initial paint + fit to bounds.
-render();
+// Initial fit — triggers moveend, which calls render() for us. The extra render()
+// is a belt-and-braces for the rare case fitBounds doesn't move the view at all.
 const bounds = L.latLngBounds(PLACES.map((p) => [p.lat, p.lng]));
 map.fitBounds(bounds, { padding: [40, 40] });
+render();
 
 // Make sure Leaflet picks up the final container size once flex/grid settles,
 // and on every window resize.

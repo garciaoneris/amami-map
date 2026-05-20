@@ -24,8 +24,6 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="controls">
-        <input id="search" type="search" placeholder="Search by name or description…" aria-label="Search" />
-
         <div class="row">
           <label for="sort">Sort</label>
           <select id="sort">
@@ -35,64 +33,7 @@
             <option value="name">Name (A → Z)</option>
           </select>
         </div>
-
-        <div class="filter-section">
-          <div class="filter-title">Meal</div>
-          <div class="chips" data-group="meal">
-            <button class="chip" data-tag="breakfast">Breakfast</button>
-            <button class="chip" data-tag="lunch">Lunch</button>
-            <button class="chip" data-tag="dinner">Dinner</button>
-          </div>
-        </div>
-
-        <div class="filter-section">
-          <div class="filter-title">Type</div>
-          <div class="chips" data-group="type">
-            <button class="chip" data-tag="restaurant">Restaurant</button>
-            <button class="chip" data-tag="café">Café</button>
-            <button class="chip" data-tag="bakery">Bakery</button>
-            <button class="chip" data-tag="dessert">Dessert</button>
-          </div>
-        </div>
-
-        <div class="filter-section">
-          <div class="filter-title">Vibe</div>
-          <div class="chips" data-group="vibe">
-            <button class="chip" data-tag="must-visit">★ Must-visit</button>
-            <button class="chip" data-tag="view">Great view</button>
-            <button class="chip" data-tag="ocean">By the ocean</button>
-            <button class="chip" data-tag="classy">Classy</button>
-            <button class="chip" data-tag="local-vibe">Local vibe</button>
-          </div>
-        </div>
-
-        <div class="filter-section">
-          <div class="filter-title">Cuisine</div>
-          <div class="chips" data-group="cuisine">
-            <button class="chip" data-tag="ramen">Ramen</button>
-            <button class="chip" data-tag="keihan">Keihan</button>
-            <button class="chip" data-tag="seafood">Seafood</button>
-            <button class="chip" data-tag="burger">Burger</button>
-            <button class="chip" data-tag="sandwich">Sandwich</button>
-            <button class="chip" data-tag="pizza">Pizza</button>
-            <button class="chip" data-tag="yakitori">Yakitori</button>
-            <button class="chip" data-tag="soba">Soba</button>
-            <button class="chip" data-tag="tofu">Tofu</button>
-            <button class="chip" data-tag="ice-cream">Ice cream</button>
-          </div>
-        </div>
-
-        <div class="filter-section">
-          <div class="filter-title">Region</div>
-          <div class="chips" data-group="region">
-            <button class="chip" data-tag="north">North (Tatsugo / Kasari)</button>
-            <button class="chip" data-tag="naze">Naze (city)</button>
-            <button class="chip" data-tag="central">Central</button>
-            <button class="chip" data-tag="south">South (Setouchi)</button>
-          </div>
-        </div>
-
-        <button id="clear-filters" class="clear-btn" type="button">Clear all filters</button>
+        <div class="hint">Zoom or pan the map — the list shows only what's in view.</div>
       </div>
 
       <div id="list" class="list" aria-live="polite"></div>
